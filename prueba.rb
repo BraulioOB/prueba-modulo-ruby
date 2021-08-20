@@ -1,8 +1,6 @@
-#szD6cRBcmJUEcGIAeKNL27Li7VIyLnxttdWXzaQf
-#https://api.nasa.gov/planetary/apod?api_key=szD6cRBcmJUEcGIAeKNL27Li7VIyLnxttdWXzaQf
+# szD6cRBcmJUEcGIAeKNL27Li7VIyLnxttdWXzaQf
 # Account Email: sific15195@fxseller.com
 # Account ID: 1aeca1e1-8485-47b6-9b24-2555bd1d4ec8
-
 # https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=10&api_key=szD6cRBcmJUEcGIAeKNL27Li7VIyLnxttdWXzaQf
 
 require "json"
@@ -38,11 +36,10 @@ def buid_web_page (hash)
         '</body>',
         '</html>'
     ]
-    
+
     img_array = []
     hash["photos"].each do |img_url|
-        # img_array.append "<li><img src='#{img_url["img_src"]}'></li>"
-        img_array = img_url.select{|k,v| k == "img_src"}
+        img_array.append "<li><img src='#{img_url["img_src"]}'></li>"
     end
     
     file = File.open("index.html", "w")
@@ -60,15 +57,23 @@ def buid_web_page (hash)
 
 end
 
-# def photos_count (hash)
-#     img_array = []
-#     hash["photos"].each do |img_url|
-#         img_array.append "<li><img src='#{img_url["img_src"]}'></li>"
-#     end
-# end
+def photos_count (hash)
+    camera_count = {}
+    hash["photos"].each do |camera|
+        key_name = camera["camera"]["full_name"]
+        if camera_count.keys.include? key_name
+            camera_count[key_name] += 1
+        else
+            camera_count[key_name] = 1
+        end
+    end
+
+    return camera_count
+end
 
 u = "https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=10"
 k = "szD6cRBcmJUEcGIAeKNL27Li7VIyLnxttdWXzaQf"
 
 r = request u, k
 buid_web_page (r)
+photo_summary = photos_count (r)
